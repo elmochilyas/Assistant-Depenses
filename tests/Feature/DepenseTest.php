@@ -164,3 +164,41 @@ test('category summary highlights selected category', function () {
     $response->assertStatus(200);
     $response->assertSee('Résumé par catégorie');
 });
+
+test('category summary shows only selected category when filter is active', function () {
+    $user = User::factory()->create();
+    $recu = $user->recus()->create([
+        'texte_brut' => 'Facture test avec du texte suffisamment long',
+        'statut' => 'traite',
+    ]);
+    $recu->depenses()->createMany([
+        ['libelle' => 'Pain', 'quantite' => 2, 'prix_unitaire' => 1.5, 'categorie' => 'alimentaire'],
+        ['libelle' => 'Eau', 'quantite' => 6, 'prix_unitaire' => 5.0, 'categorie' => 'boissons'],
+    ]);
+
+    $response = $this->actingAs($user)->get(route('depenses.index', ['categorie' => 'alimentaire']));
+
+    $response->assertStatus(200);
+    $response->assertSeeInOrder(['Résumé par catégorie', 'Alimentaire', '1 · 3']);
+});
+
+test('category summary shows all categories when no filter is active', function () {
+    $user = User::factory()->create();
+    $recu = $user->recus()->create([
+        'texte_brut' => 'Facture test avec du texte suffisamment long',
+        'statut' => 'traite',
+    ]);
+    $recu->depenses()->createMany([
+        ['libelle' => 'Pain', 'quantite' => 2, 'prix_unitaire' => 1.5, 'categorie' => 'alimentaire'],
+        ['libelle' => 'Eau', 'quantite' => 6, 'prix_unitaire' => 5.0, 'categorie' => 'boissons'],
+    ]);
+
+    $response = $this->actingAs($user)->get(route('depenses.index'));
+
+    $response->assertStatus(200);
+    $response->assertSee('Alimentaire');
+    $response->assertSee('Boissons');
+    $response->assertSee('Hygiène');
+    $response->assertSee('Entretien');
+    $response->assertSee('Autre');
+});
