@@ -1,8 +1,4 @@
-## Purpose
-
-Define the asynchronous AI extraction workflow. Receipt text is sent to Groq via `laravel/ai` structured output, and the returned articles are persisted as typed expense records.
-
-## Requirements
+## ADDED Requirements
 
 ### Requirement: AI extraction runs asynchronously via a queued Job
 The system SHALL process receipt text through an AI extraction Job that runs asynchronously on a Queue Worker.
@@ -21,21 +17,7 @@ The system SHALL process receipt text through an AI extraction Job that runs asy
 The Job SHALL use the official `laravel/ai` SDK to call Groq with guaranteed structured output.
 
 - The SDK SHALL be configured via `config/ai.php` with the Groq provider
-- The structured output schema SHALL match the AI Extraction Contract:
-  ```json
-  {
-    "articles": [
-      {
-        "libelle": "string",
-        "quantite": "integer",
-        "prix_unitaire": "number",
-        "categorie": "alimentaire|boissons|hygiene|entretien|autre"
-      }
-    ],
-    "total_estime": "number",
-    "devise": "string"
-  }
-  ```
+- The structured output schema SHALL match the AI Extraction Contract with `articles`, `total_estime`, and `devise`
 - The Job SHALL NOT use `Http::post()`, Guzzle, cURL or any raw HTTP client
 - The Job SHALL validate and preserve the raw AI payload in `recus.payload_ia`
 
