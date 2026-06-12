@@ -33,7 +33,7 @@ The system SHALL display a category summary section on the expense index page th
 - The summary SHALL be scoped to the authenticated user's expenses only
 - The summary data SHALL be loaded via a single aggregated query, not per-row queries
 - Each category in the summary SHALL link to the filtered expense list for that category (using the existing `categorie` query parameter)
-- The summary SHALL update when the category filter is applied (if filtered, only show summary data for the selected category)
+- The summary SHALL update its data when the category filter is applied: when a category is selected, only that category's aggregated data SHALL be shown; the other categories SHALL be hidden from the summary
 
 #### Scenario: Authenticated user sees category summary on expense list
 
@@ -49,7 +49,13 @@ The system SHALL display a category summary section on the expense index page th
 #### Scenario: Category summary updates when filter is applied
 
 - **WHEN** an authenticated user filters expenses by a specific category
-- **THEN** the category summary section highlights or focuses on the selected category's data
+- **THEN** the category summary section shows only the selected category's aggregated data (count and total)
+- **AND** the other categories are not displayed in the summary
+
+#### Scenario: Category summary shows all categories when no filter is active
+
+- **WHEN** an authenticated user views the expense list without a `categorie` filter
+- **THEN** the category summary section shows all categories with their respective counts and totals
 
 ### Requirement: User can filter expenses by category
 The system SHALL allow the authenticated user to filter the expense list by selecting a category.

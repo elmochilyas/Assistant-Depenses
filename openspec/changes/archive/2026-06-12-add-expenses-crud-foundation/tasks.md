@@ -1,6 +1,6 @@
 ## 1. Branch Setup
 
-- [ ] 1.1 Create and switch to `feature/depenses-crud` branch from `main`
+- [x] 1.1 Create and switch to `feature/depenses-crud` branch from `main`
 
 ## 2. Fix Category Summary Filtering
 
@@ -16,4 +16,4 @@
 ## 4. Verification
 
 - [x] 4.1 Verify no N+1 queries exist in `depenses.index` and `depenses.categories` views
-- [ ] 4.2 Commit all changes with message `fix(ai): scope category summary to selected filter on expense index`
+- [x] 4.2 Commit all changes with message `fix(ai): scope category summary to selected filter on expense index`
