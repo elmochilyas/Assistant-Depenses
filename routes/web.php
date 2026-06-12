@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('recus', RecuController::class)->except(['edit', 'update']);
     Route::get('depenses', [DepenseController::class, 'index'])->name('depenses.index');
+    Route::get('depenses/categories', [DepenseController::class, 'categories'])->name('depenses.categories');
 });
 
 require __DIR__.'/auth.php';
