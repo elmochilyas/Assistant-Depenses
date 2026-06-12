@@ -20,7 +20,9 @@ class DepenseController extends Controller
             $depenses->where('categorie', $categorie);
         }
 
-        $categorySummary = $this->buildCategorySummary();
+        $categorySummary = $this->buildCategorySummary(
+            $categorie && CategorieDepense::tryFrom($categorie) ? $categorie : null
+        );
 
         return view('depenses.index', [
             'depenses' => $depenses->latest()->get(),
@@ -38,13 +40,14 @@ class DepenseController extends Controller
         ]);
     }
 
-    private function buildCategorySummary(): array
+    private function buildCategorySummary(?string $categorie = null): array
     {
         $userId = auth()->id();
 
         $aggregations = Depense::whereHas('recu', function ($query) use ($userId) {
             $query->where('user_id', $userId);
         })
+            ->when($categorie, fn ($query) => $query->where('categorie', $categorie))
             ->select('categorie', DB::raw('COUNT(*) as total_count'), DB::raw('SUM(prix_unitaire * quantite) as total_amount'))
             ->groupBy('categorie')
             ->get()
@@ -53,7 +56,12 @@ class DepenseController extends Controller
         $categories = [];
 
         foreach (CategorieDepense::cases() as $cat) {
+            if ($categorie && $cat->value !== $categorie) {
+                continue;
+            }
+
             $agg = $aggregations->get($cat->value);
+
             $categories[] = (object) [
                 'categorie' => $cat,
                 'total_count' => $agg->total_count ?? 0,
